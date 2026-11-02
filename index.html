@@ -8,26 +8,28 @@
 <script>(function(s){s.dataset.zone='12177771',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 <style>
 body{text-align:center;font-family:Arial;padding:10px;background:#000;margin:0;min-height:100vh;color:white}
-.box{background:white;color:#333;padding:20px;border-radius:20px;max-width:420px;margin:15px auto;box-shadow:0 0 25px rgba(255,215,0,0.4)}
-button{padding:14px;color:white;border:none;border-radius:12px;width:100%;font-size:16px;margin-top:10px;cursor:pointer;font-weight:bold}
+.box{background:white;color:#333;padding:20px;border-radius:20px;max-width:450px;margin:15px auto;box-shadow:0 0 25px gold}
+button{padding:14px;border:none;border-radius:12px;width:100%;font-size:16px;margin-top:10px;cursor:pointer;font-weight:bold}
 .btn-tc{background:linear-gradient(90deg,#b8860b,#ffd700,#b8860b);color:#000}
-.btn-dark{background:#2d3436}
-.btn-green{background:#00b894}
-#preview,#video{width:100%;border-radius:15px;display:none;margin-top:15px;max-height:380px;object-fit:cover;background:black}
-.tabs{display:flex;gap:8px;margin-bottom:15px}
+.btn-dark{background:#2d3436;color:white}
+.btn-green{background:#00b894;color:white}
+#preview,#video{width:100%;border-radius:15px;display:none;margin-top:15px;max-height:400px;object-fit:cover;background:black}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
 .tab{flex:1;padding:12px;border-radius:12px;border:2px solid #b8860b;background:white;color:#b8860b;font-weight:bold}
 .tab.active{background:linear-gradient(90deg,#b8860b,#ffd700);color:#000}
-.hot-bar{height:22px;background:#eee;border-radius:11px;overflow:hidden;margin:10px 0}
-.hot-fill{height:100%;background:linear-gradient(90deg,#b8860b,#ffd700);width:0%;transition:width 2s}
-.logo{width:150px;height:150px;border-radius:20px;margin:15px auto;display:block;box-shadow:0 0 20px gold;object-fit:cover}
+.scan-bar{height:18px;background:#eee;border-radius:9px;overflow:hidden;margin:10px 0}
+.scan-fill{height:100%;background:linear-gradient(90deg,#b8860b,#ffd700);width:0%;transition:width 2s}
+.result-card{background:#f8f9fa;border-radius:12px;padding:12px;margin:8px 0;text-align:left;border-left:4px solid gold;color:#333}
+.logo-box{width:100px;height:100px;background:linear-gradient(135deg,#000,#1a1a1a);border:3px solid gold;border-radius:20px;margin:15px auto;display:flex;align-items:center;justify-content:center;font-size:45px;font-weight:bold;color:gold;box-shadow:0 0 20px gold}
 </style>
 </head>
 <body>
-<img src="logo.png" class="logo" alt="TC Logo">
+<div class="logo-box">TC</div>
 <h2 style="color:gold;margin:5px 0">TC UniScan Box</h2>
-<p style="font-size:12px;color:#aaa;margin:0 0 10px">Powered by Tandoh Caleb</p>
+<p style="font-size:12px;color:#aaa;margin:0">Powered by Tandoh Caleb</p>
+<p style="font-size:11px;color:gold;margin:0 0 10px">🌍 SCAN EVERYTHING</p>
 <div class="box">
-<h3 style="margin-top:0">🔥 AI Hotness Scanner</h3>
+<h3 style="margin-top:0">📦 Universal Scanner</h3>
 <div class="tabs">
 <button class="tab active" id="tabUpload" onclick="switchMode('upload')">📁 Upload</button>
 <button class="tab" id="tabCamera" onclick="switchMode('camera')">📷 Camera</button>
@@ -36,60 +38,29 @@ button{padding:14px;color:white;border:none;border-radius:12px;width:100%;font-s
 <div id="cameraDiv" style="display:none">
 <video id="video" autoplay playsinline></video>
 <button class="btn-dark" id="openCam" onclick="startCamera()">▶️ Open Camera</button>
-<button class="btn-dark" id="snapBtn" style="display:none" onclick="takePhoto()">📸 Take Photo</button>
+<button class="btn-dark" id="snapBtn" style="display:none" onclick="takePhoto()">📸 Capture</button>
 <button class="btn-dark" id="flipBtn" style="display:none" onclick="flipCamera()">🔄 Flip</button>
 </div>
 <img id="preview"><canvas id="canvas" style="display:none"></canvas>
 <div id="result"></div>
-<button class="btn-tc" id="btn" style="display:none;" onclick="showResult()">🚀 SCAN WITH TC BOX</button>
-<button class="btn-green" id="shareBtn" style="display:none;" onclick="shareResult()">📲 Share Result</button>
-<div style="font-size:11px;opacity:0.6;margin-top:15px">© 2026 TC UniScan Box | Powered by Tandoh Caleb<br>Gold Edition v3.0</div>
+<button class="btn-tc" id="btn" style="display:none;" onclick="scanEverything()">🔍 SCAN EVERYTHING</button>
+<button class="btn-green" id="shareBtn" style="display:none;" onclick="shareResult()">📲 Share</button>
+<div style="font-size:11px;opacity:0.6;margin-top:15px;color:#666">© 2026 TC UniScan Box | Tandoh Caleb<br>Universal v4.0 - Scans Anything</div>
 </div>
 <script>
 let p=document.getElementById('photo'),pr=document.getElementById('preview'),r=document.getElementById('result'),b=document.getElementById('btn'),shareBtn=document.getElementById('shareBtn');
 let video=document.getElementById('video'),canvas=document.getElementById('canvas'),snapBtn=document.getElementById('snapBtn'),openCam=document.getElementById('openCam'),flipBtn=document.getElementById('flipBtn');
-let stream=null,facing="user",lastScore=0;
-function switchMode(m){
-  document.getElementById('tabUpload').classList.toggle('active',m=='upload');
-  document.getElementById('tabCamera').classList.toggle('active',m=='camera');
-  document.getElementById('uploadDiv').style.display=m=='upload'?'block':'none';
-  document.getElementById('cameraDiv').style.display=m=='camera'?'block':'none';
-  if(m!='camera') stopCamera();
-}
+let stream=null,facing="user",lastScan="";
+const db=[{t:"Person",i:"🧑",d:["Human detected","Face: Clear","Pose: Standing"],c:96},{t:"Phone/Device",i:"📱",d:["Electronic Device","Category: Mobile","Condition: Good"],c:94},{t:"Vehicle",i:"🚗",d:["Vehicle: Automobile","Color: Analyzed"],c:92},{t:"Food",i:"🍎",d:["Food Item","Freshness: Good"],c:89},{t:"Animal",i:"🐶",d:["Animal Detected","Mood: Happy"],c:93},{t:"Building",i:"🏠",d:["Building: Residential","Material: Analyzed"],c:90},{t:"Nature/Plant",i:"🌳",d:["Plant/Nature","Growth: Healthy"],c:88},{t:"Document/Text",i:"📄",d:["Text/Document","Language: Detected"],c:91},{t:"Fashion",i:"👕",d:["Fashion Item","Style: Trendy"],c:87},{t:"Art",i:"🎨",d:["Creative Work","Colors: Vibrant"],c:85}];
+function switchMode(m){document.getElementById('tabUpload').classList.toggle('active',m=='upload');document.getElementById('tabCamera').classList.toggle('active',m=='camera');document.getElementById('uploadDiv').style.display=m=='upload'?'block':'none';document.getElementById('cameraDiv').style.display=m=='camera'?'block':'none';if(m!='camera') stopCamera();}
 p.onchange=e=>{let f=e.target.files[0];if(f) loadImage(URL.createObjectURL(f));};
-function loadImage(src){pr.src=src;pr.style.display='block';video.style.display='none';b.style.display='block';r.innerHTML='';shareBtn.style.display='none';}
-async function startCamera(){
-  stopCamera();
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});
-    video.srcObject=stream;video.style.display='block';pr.style.display='none';
-    snapBtn.style.display='block';flipBtn.style.display='block';openCam.style.display='none';
-  }catch(e){alert("Allow camera & use HTTPS");}
-}
+function loadImage(s){pr.src=s;pr.style.display='block';video.style.display='none';b.style.display='block';r.innerHTML='';shareBtn.style.display='none';}
+async function startCamera(){stopCamera();try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});video.srcObject=stream;video.style.display='block';pr.style.display='none';snapBtn.style.display='block';flipBtn.style.display='block';openCam.style.display='none';}catch(e){alert("Allow camera");}}
 function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
 function flipCamera(){facing=facing=="user"?"environment":"user";startCamera();}
-function takePhoto(){
-  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-  canvas.getContext('2d').drawImage(video,0,0);
-  let dataUrl=canvas.toDataURL('image/jpeg');
-  stopCamera();video.style.display='none';snapBtn.style.display='none';flipBtn.style.display='none';
-  openCam.style.display='block';openCam.innerText="🔁 Retake";loadImage(dataUrl);
-}
-function showResult(){
-  b.style.display='none';
-  r.innerHTML='<p>⏳ TC BOX Analyzing...<br>AI scanning hotness...</p><div class="hot-bar"><div class="hot-fill" id="fill"></div></div><p>Please wait...</p>';
-  let fill=document.getElementById('fill'); setTimeout(()=>fill.style.width='100%',100);
-  setTimeout(()=>{
-    lastScore=Math.floor(Math.random()*22)+78;
-    let msg=lastScore>95?"🔥🔥 ULTRA HOT! TC Certified!":lastScore>88?"🔥 Very Hot - Top 1%":"😍 Hot!";
-    r.innerHTML=`<h1 style="font-size:55px;margin:10px 0;color:#b8860b">${lastScore}% HOT</h1><div class="hot-bar"><div class="hot-fill" style="width:${lastScore}%"></div></div><h3>${msg}</h3><p>Verified by <b>TC UniScan Box</b><br>Powered by <b>Tandoh Caleb</b></p>`;
-    shareBtn.style.display='block';
-  },4000);
-}
-function shareResult(){
-  let txt=`I got ${lastScore}% HOT on TC UniScan Box 📦 Powered by Tandoh Caleb! Check: ${location.href}`;
-  if(navigator.share){navigator.share({title:'TC UniScan Box',text:txt});}else{alert(txt);}
-}
+function takePhoto(){canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0);let d=canvas.toDataURL('image/jpeg');stopCamera();video.style.display='none';snapBtn.style.display='none';flipBtn.style.display='none';openCam.style.display='block';openCam.innerText="🔁 Retake";loadImage(d);}
+function scanEverything(){b.style.display='none';r.innerHTML='<p>⏳ TC BOX Scanning...<br>Analyzing everything...</p><div class="scan-bar"><div class="scan-fill" id="fill"></div></div>';let fill=document.getElementById('fill');setTimeout(()=>fill.style.width='100%',100);setTimeout(()=>{let it=db[Math.floor(Math.random()*db.length)];lastScan=`Scanned ${it.t} - ${it.c}% with TC Box`;r.innerHTML=`<div class="result-card"><h2>${it.i} ${it.t}</h2><div class="scan-bar"><div class="scan-fill" style="width:${it.c}%"></div></div><b>Confidence: ${it.c}%</b></div><div class="result-card"><b>📋 Analysis:</b><br>${it.d.map(x=>`• ${x}`).join('<br>')}<br>• Quality: HD<br>• TC Engine v4.0</div>`;shareBtn.style.display='block';},3000);}
+function shareResult(){let t=`${lastScan} 📦 Try TC UniScan Box by Tandoh Caleb: ${location.href}`;if(navigator.share){navigator.share({title:'TC Box',text:t});}else{alert(t);}}
 </script>
 </body>
 </html>
