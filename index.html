@@ -1,50 +1,46 @@
-import streamlit as st
-import streamlit.components.v1 as components
-import time
-import random
-
-st.set_page_config(page_title="AI Photo Analyzer", page_icon="📸")
-
-# ===== YOUR MONETAG MONEY CODE - DO NOT REMOVE =====
-components.html(
-    """
-    <script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
-    """,
-    height=0, width=0
-)
-
-st.title("📸 AI Photo Analyzer")
-st.write("Take a pic to see your result")
-
-uploaded_file = st.file_uploader("📷 Take / Upload Photo", type=["jpg","png","jpeg"])
-
-if uploaded_file:
-    st.image(uploaded_file, caption="Your Photo", use_container_width=True)
-    
-    if st.button("✨ Get My Result", use_container_width=True):
-        # THIS IS WHERE AD SHOWS
-        with st.spinner("⏳ Analyzing... Please wait 5 seconds for AI..."):
-            # Inject ad trigger again to force pop
-            components.html(
-                """
-                <script>
-                // Try to trigger ad
-                try { window.open('', '_blank'); } catch(e){}
-                </script>
-                <script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
-                """,
-                height=0
-            )
-            time.sleep(5)  # Ad shows in these 5 sec
-
-        # ===== YOUR FINAL RESULT =====
-        results = [
-            "🔥 You look amazing! 95% attractive!",
-            "😎 Your vibe is confident and powerful!",
-            "🌟 Today is your lucky day!",
-            "💎 Future millionaire face!",
-            "❤️ You have a kind heart!"
-        ]
-        st.success(random.choice(results))
-        st.balloons()
-        st.button("Try Another Pic", on_click=lambda: st.rerun())
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Photo Analyzer</title>
+<script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+<style>
+body{text-align:center;font-family:Arial;padding:20px;background:#f5f5f5}
+.card{background:white;padding:20px;border-radius:15px;max-width:400px;margin:auto;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+button{padding:15px;background:#6c5ce7;color:white;border:none;border-radius:10px;width:100%;font-size:18px;margin-top:10px}
+#preview{width:100%;border-radius:10px;display:none;margin-top:15px}
+#result{margin-top:20px;font-size:20px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>📸 AI Photo Analyzer</h2>
+<p>Take a pic to see your result</p>
+<input type="file" id="photo" accept="image/*" capture="camera">
+<img id="preview">
+<div id="result"></div>
+<button id="btn" style="display:none;" onclick="showResult()">✨ Get My Result</button>
+</div>
+<script>
+let photo=document.getElementById('photo'),preview=document.getElementById('preview'),result=document.getElementById('result'),btn=document.getElementById('btn');
+photo.onchange=e=>{
+  let file=e.target.files[0];
+  if(file){
+    preview.src=URL.createObjectURL(file);
+    preview.style.display='block';
+    btn.style.display='block';
+    result.innerHTML='';
+  }
+};
+function showResult(){
+  btn.style.display='none';
+  result.innerHTML='⏳ Analyzing... please wait 5 sec...';
+  setTimeout(()=>{
+    let msgs=["🔥 You look amazing! 95% attractive!","😎 Confident vibe! Future leader!","🌟 Today is your lucky day!","💎 Millionaire face!","❤️ You have a kind heart!"];
+    result.innerHTML=msgs[Math.floor(Math.random()*msgs.length)];
+  },5000);
+}
+</script>
+</body>
+</html>
