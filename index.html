@@ -1,5 +1,99 @@
-<html><body style="text-align:center;padding:30px">
-<h2>📸 AI Photo Works!</h2>
-<input type="file" accept="image/*">
-<p>If you see this, your link is fixed!</p>
-</body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Hotness Analyzer - How Hot Are You?</title>
+<!-- AD CODE 1 - OLD -->
+<script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+<!-- AD CODE 2 - NEW - PAYS MORE -->
+<script>(function(s){s.dataset.zone='12177771',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+<style>
+body{text-align:center;font-family:Arial;padding:10px;background:linear-gradient(135deg,#f093fb,#f5576c);margin:0;min-height:100vh}
+.box{background:white;padding:20px;border-radius:20px;max-width:420px;margin:15px auto;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+button{padding:14px;color:white;border:none;border-radius:12px;width:100%;font-size:16px;margin-top:10px;cursor:pointer;font-weight:bold}
+.btn-hot{background:linear-gradient(90deg,#f5576c,#f093fb)}
+.btn-dark{background:#2d3436}
+.btn-green{background:#00b894}
+#preview,#video{width:100%;border-radius:15px;display:none;margin-top:15px;max-height:350px;object-fit:cover;background:black}
+#result{margin-top:20px}
+.tabs{display:flex;gap:8px;margin-bottom:15px}
+.tab{flex:1;padding:12px;border-radius:12px;border:2px solid #f5576c;background:white;color:#f5576c;font-weight:bold}
+.tab.active{background:#f5576c;color:white}
+.hot-bar{height:20px;background:#eee;border-radius:10px;overflow:hidden;margin:10px 0}
+.hot-fill{height:100%;background:linear-gradient(90deg,#f5576c,#f093fb);width:0%;transition:width 2s}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>🔥 AI Hotness Meter</h2>
+<p>How hot are you? 1-100%</p>
+<div class="tabs">
+<button class="tab active" id="tabUpload" onclick="switchMode('upload')">📁 Upload</button>
+<button class="tab" id="tabCamera" onclick="switchMode('camera')">📷 Camera</button>
+</div>
+
+<div id="uploadDiv"><input type="file" id="photo" accept="image/*" style="width:100%"></div>
+<div id="cameraDiv" style="display:none">
+<video id="video" autoplay playsinline></video>
+<button class="btn-dark" id="openCam" onclick="startCamera()">▶️ Open Camera</button>
+<button class="btn-dark" id="snapBtn" style="display:none" onclick="takePhoto()">📸 Take Photo</button>
+<button class="btn-dark" id="flipBtn" style="display:none" onclick="flipCamera()">🔄 Flip</button>
+</div>
+
+<img id="preview">
+<canvas id="canvas" style="display:none"></canvas>
+<div id="result"></div>
+<button class="btn-hot" id="btn" style="display:none;" onclick="showResult()">🔥 Check My Hotness</button>
+<button class="btn-green" id="shareBtn" style="display:none;" onclick="shareResult()">📲 Share & Get More</button>
+</div>
+
+<script>
+let p=document.getElementById('photo'),pr=document.getElementById('preview'),r=document.getElementById('result'),b=document.getElementById('btn'),shareBtn=document.getElementById('shareBtn');
+let video=document.getElementById('video'),canvas=document.getElementById('canvas'),snapBtn=document.getElementById('snapBtn'),openCam=document.getElementById('openCam'),flipBtn=document.getElementById('flipBtn');
+let stream=null,facing="user",lastScore=0;
+
+function switchMode(m){
+  document.getElementById('tabUpload').classList.toggle('active',m=='upload');
+  document.getElementById('tabCamera').classList.toggle('active',m=='camera');
+  document.getElementById('uploadDiv').style.display=m=='upload'?'block':'none';
+  document.getElementById('cameraDiv').style.display=m=='camera'?'block':'none';
+  if(m!='camera') stopCamera();
+}
+p.onchange=e=>{let f=e.target.files[0];if(f) loadImage(URL.createObjectURL(f));};
+function loadImage(src){pr.src=src;pr.style.display='block';video.style.display='none';b.style.display='block';r.innerHTML='';shareBtn.style.display='none';}
+async function startCamera(){
+  stopCamera();
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});
+    video.srcObject=stream;video.style.display='block';pr.style.display='none';
+    snapBtn.style.display='block';flipBtn.style.display='block';openCam.style.display='none';
+  }catch(e){alert("Allow camera permission and use HTTPS");}
+}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+function flipCamera(){facing=facing=="user"?"environment":"user";startCamera();}
+function takePhoto(){
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  let dataUrl=canvas.toDataURL('image/jpeg');
+  stopCamera();video.style.display='none';snapBtn.style.display='none';flipBtn.style.display='none';
+  openCam.style.display='block';openCam.innerText="🔁 Retake";loadImage(dataUrl);
+}
+function showResult(){
+  b.style.display='none';
+  r.innerHTML='<p>⏳ AI Scanning your face...<br>Checking hotness...</p><div class="hot-bar"><div class="hot-fill" id="fill"></div></div><p>Please wait 4 seconds...</p>';
+  let fill=document.getElementById('fill'); setTimeout(()=>fill.style.width='100%',100);
+  setTimeout(()=>{
+    lastScore=Math.floor(Math.random()*22)+78;
+    let msg=lastScore>95?"🔥🔥 ULTRA HOT! Model Face!":lastScore>88?"🔥 Very Hot! 1 in 100!":lastScore>80?"😍 Hot! Everyone stares!";
+    r.innerHTML=`<h1 style="font-size:50px;margin:10px 0">${lastScore}%</h1><div class="hot-bar"><div class="hot-fill" style="width:${lastScore}%"></div></div><h3>${msg}</h3><p>You are hotter than ${lastScore}% of people!</p>`;
+    shareBtn.style.display='block';
+  },4000);
+}
+function shareResult(){
+  if(navigator.share){navigator.share({title:'My Hotness Score',text:`I got ${lastScore}% hot on AI Hotness Meter! Check yours: ${location.href}`});}
+  else{alert(`I got ${lastScore}% HOT! 🔥 Check yours: ${location.href}`);}
+}
+</script>
+</body>
+</html>
