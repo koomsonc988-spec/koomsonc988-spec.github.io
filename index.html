@@ -1,92 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Photo Analyzer</title>
+import streamlit as st
+import streamlit.components.v1 as components
+import time
+import random
 
-<!-- YOUR MONETAG MONEY CODE - DO NOT REMOVE -->
-<script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+st.set_page_config(page_title="AI Photo Analyzer", page_icon="📸")
 
-<style>
-body { font-family: Arial; text-align: center; padding: 20px; background: #f0f0f0; }
-.card { background: white; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-button { background: #6c5ce7; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; width: 100%; margin-top: 15px; }
-button:active { background: #5a4bd1; }
-#preview { width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
-#result { margin-top: 20px; font-size: 18px; font-weight: bold; }
-input[type=file] { display: none; }
-.upload-label { background: #00b894; color: white; padding: 15px; border-radius: 10px; display: block; cursor: pointer; }
-</style>
-</head>
-<body>
+# ===== YOUR MONETAG MONEY CODE - DO NOT REMOVE =====
+components.html(
+    """
+    <script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+    """,
+    height=0, width=0
+)
 
-<div class="card">
-<h2>📸 AI Photo Analyzer</h2>
-<p>Take a pic to see your result</p>
+st.title("📸 AI Photo Analyzer")
+st.write("Take a pic to see your result")
 
-<label for="photoInput" class="upload-label">📷 Take / Upload Photo</label>
-<input type="file" id="photoInput" accept="image/*" capture="camera">
+uploaded_file = st.file_uploader("📷 Take / Upload Photo", type=["jpg","png","jpeg"])
 
-<img id="preview">
-<div id="result"></div>
+if uploaded_file:
+    st.image(uploaded_file, caption="Your Photo", use_container_width=True)
+    
+    if st.button("✨ Get My Result", use_container_width=True):
+        # THIS IS WHERE AD SHOWS
+        with st.spinner("⏳ Analyzing... Please wait 5 seconds for AI..."):
+            # Inject ad trigger again to force pop
+            components.html(
+                """
+                <script>
+                // Try to trigger ad
+                try { window.open('', '_blank'); } catch(e){}
+                </script>
+                <script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+                """,
+                height=0
+            )
+            time.sleep(5)  # Ad shows in these 5 sec
 
-<button id="analyzeBtn" style="display:none;" onclick="startAnalysis()">✨ Get My Result</button>
-</div>
-
-<script>
-let selectedImage = null;
-const photoInput = document.getElementById('photoInput');
-const preview = document.getElementById('preview');
-const resultDiv = document.getElementById('result');
-const analyzeBtn = document.getElementById('analyzeBtn');
-
-photoInput.addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (file) {
-    selectedImage = file;
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = 'block';
-    resultDiv.innerHTML = "";
-    analyzeBtn.style.display = 'block';
-  }
-});
-
-function startAnalysis() {
-  // 1. Hide button, show loading - THIS IS WHERE AD WILL SHOW
-  analyzeBtn.style.display = 'none';
-  resultDiv.innerHTML = "<h3>⏳ Analyzing...</h3><p>Please wait 5 seconds<br>Loading AI result...</p>";
-
-  // 2. Force Monetag Ad to show (Multitag will show interstitial automatically)
-  // Also try to trigger manually
-  window.scrollTo(0,0);
-
-  // 3. Wait 5 seconds for ad to finish, then show result
-  setTimeout(function() {
-    showFinalResult();
-  }, 5000);
-}
-
-function showFinalResult() {
-  // CHANGE THIS RESULT TO WHATEVER YOUR APP DOES
-  const results = [
-    "🔥 You look amazing! 95% attractive!",
-    "😎 Your vibe is confident and powerful!",
-    "🌟 Today is your lucky day! Good news coming!",
-    "💎 Your face shows you are a future millionaire!",
-    "❤️ You have a kind heart, people love you!"
-  ];
-  const randomResult = results[Math.floor(Math.random() * results.length)];
-  
-  resultDiv.innerHTML = `
-    <div style="background:#dfe6e9; padding:15px; border-radius:10px;">
-      <h2>${randomResult}</h2>
-      <p style="font-weight:normal; font-size:14px;">Share with friends to try!</p>
-      <button onclick="location.reload()" style="background:#636e72; margin-top:10px;">Try Another Pic</button>
-    </div>
-  `;
-}
-</script>
-
-</body>
-</html>
+        # ===== YOUR FINAL RESULT =====
+        results = [
+            "🔥 You look amazing! 95% attractive!",
+            "😎 Your vibe is confident and powerful!",
+            "🌟 Today is your lucky day!",
+            "💎 Future millionaire face!",
+            "❤️ You have a kind heart!"
+        ]
+        st.success(random.choice(results))
+        st.balloons()
+        st.button("Try Another Pic", on_click=lambda: st.rerun())
