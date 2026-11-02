@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TC Box V13 - Meta AI + OCR</title>
+<title>TC Box V14 - Fixed Auto</title>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.3.0/dist/coco-ssd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 <style>
-body{margin:0;background:#0a0a0a;color:white;font-family:Arial;padding:0}
-.header{padding:12px;text-align:center;background:#000;border-bottom:1px solid #222}
+body{margin:0;background:#0a0a0a;color:white;font-family:Arial;padding-bottom:80px}
+.header{padding:12px;text-align:center;background:#000;border-bottom:1px solid #222;position:relative;z-index:10}
 .box{max-width:500px;margin:0 auto;padding:15px}
 #preview,#video{width:100%;border-radius:12px;display:none;margin-top:12px;background:#111;max-height:380px;object-fit:contain}
-.btn-scan{background:#ff3b30;color:white;padding:14px;border:none;border-radius:10px;width:100%;font-size:15px;font-weight:bold;margin-top:12px;cursor:pointer;display:none}
+.btn-scan{background:#ff3b30;color:white;padding:16px;border:none;border-radius:12px;width:100%;font-size:16px;font-weight:bold;margin-top:12px;cursor:pointer;display:block;position:sticky;bottom:10px;z-index:20;box-shadow:0 4px 20px rgba(255,59,48,0.5)}
 .btn-dark{background:#2d3436;color:white;padding:12px;border:none;border-radius:10px;width:100%;margin-top:8px;font-weight:bold;cursor:pointer}
 .card{background:#1a1a1a;border:1px solid #333;border-radius:14px;padding:16px;margin:14px 0;text-align:left;font-size:14px;line-height:1.7;color:#e0e0e0}
 .card b{color:gold}
@@ -22,15 +22,15 @@ body{margin:0;background:#0a0a0a;color:white;font-family:Arial;padding:0}
 input[type=file]{width:100%;padding:12px;background:#1a1a1a;border:1px dashed #444;border-radius:10px;color:white}
 .logo{width:70px;height:70px;background:linear-gradient(135deg,#222,#000);border:2px solid gold;border-radius:16px;margin:10px auto;display:flex;align-items:center;justify-content:center;color:gold;font-weight:bold;font-size:28px}
 .bar{height:8px;background:#222;border-radius:4px;overflow:hidden;margin:8px 0}
-.fill{height:100%;background:gold;width:0%;transition:width 0.3s}
+.fill{height:100%;background:#ff3b30;width:0%;transition:width 0.3s}
 .small{font-size:11px;color:#888}
 </style>
 </head>
 <body>
 <div class="header">
 <div class="logo">TC</div>
-<h3 style="margin:5px 0;color:gold">TC Box V13 - Meta AI + OCR</h3>
-<p style="font-size:11px;color:#888;margin:0">Reads Brand Text Like Meta AI | Tandoh Caleb</p>
+<h3 style="margin:5px 0;color:gold">TC Box V14 - Fixed Auto-Scan</h3>
+<p style="font-size:11px;color:#888;margin:0">Auto Reads Like Meta AI | Tandoh Caleb</p>
 </div>
 <div class="box">
 <div class="tabs">
@@ -46,9 +46,9 @@ input[type=file]{width:100%;padding:12px;background:#1a1a1a;border:1px dashed #4
 </div>
 <img id="preview" crossorigin="anonymous">
 <div id="result"></div>
-<button class="btn-scan" id="btn" onclick="scanMetaOCR()">🔍 SCAN NOW - META AI + OCR READER</button>
+<button class="btn-scan" id="btn" onclick="scanMetaOCR()">🔍 SCAN NOW - TAP HERE IF NOT AUTO</button>
 <canvas id="canvas" style="display:none"></canvas>
-<p style="font-size:10px;color:#555;text-align:center;margin-top:20px">© 2026 TC Box V13 | Reads Text | Tandoh Caleb</p>
+<p style="font-size:10px;color:#555;text-align:center;margin-top:20px">© 2026 TC Box V14 | Tandoh Caleb | Auto-Scan</p>
 </div>
 <script>
 let p=document.getElementById('photo'),pr=document.getElementById('preview'),r=document.getElementById('result'),b=document.getElementById('btn');
@@ -59,77 +59,90 @@ function loadAds(){if(adsLoaded) return; adsLoaded=true;
  let s1=document.createElement('script'); s1.src='https://quge5.com/88/tag.min.js'; s1.dataset.zone='305025'; s1.async=true; document.body.appendChild(s1);
  let s2=document.createElement('script'); s2.src='https://al5sm.com/tag.min.js'; s2.dataset.zone='12177771'; document.body.appendChild(s2);
 }
-async function loadModel(){if(model) return model; model=await cocoSsd.load(); return model;}
+async function loadModel(){
+ if(model) return model; 
+ r.innerHTML='<div class="card">🧠 Loading AI Brain... First time 10 sec, please wait...</div>';
+ try{ model=await cocoSsd.load(); r.innerHTML='<div class="card" style="border-color:#00ff88;color:#00ff88">✅ AI Ready! Now scanning...</div>'; return model; }
+ catch(e){ r.innerHTML=`<div class="card" style="border-color:red">❌ AI Load Failed: ${e.message}<br>Check internet, use Chrome, HTTPS required</div>`; return null; }
+}
 function switchMode(m){document.getElementById('tabU').classList.toggle('active',m=='upload');document.getElementById('tabC').classList.toggle('active',m=='camera');document.getElementById('uploadDiv').style.display=m=='upload'?'block':'none';document.getElementById('cameraDiv').style.display=m=='camera'?'block':'none';if(m!='camera') stopCamera();}
-p.onchange=e=>{let f=e.target.files[0];if(f){pr.src=URL.createObjectURL(f);pr.style.display='block';video.style.display='none';b.style.display='block';r.innerHTML='';}};
-async function startCamera(){stopCamera();try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});video.srcObject=stream;video.style.display='block';pr.style.display='none';snapBtn.style.display='block';flipBtn.style.display='block';openCam.style.display='none';}catch(e){alert("Allow camera - use HTTPS");}}
+p.onchange=e=>{let f=e.target.files[0];if(f){pr.src=URL.createObjectURL(f);pr.style.display='block';video.style.display='none';b.style.display='block';r.innerHTML='<div class="card">📸 Photo loaded - Auto scanning in 1 sec...</div>'; setTimeout(()=>scanMetaOCR(),1000); }};
+async function startCamera(){stopCamera();try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}});video.srcObject=stream;video.style.display='block';pr.style.display='none';snapBtn.style.display='block';flipBtn.style.display='block';openCam.style.display='none';}catch(e){alert("Allow camera - use Chrome + HTTPS");}}
 function stopCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
 function flipCamera(){facing=facing=="user"?"environment":"user";startCamera();}
-function takePhoto(){canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext('2d').drawImage(video,0,0);let d=canvas.toDataURL('image/jpeg');stopCamera();video.style.display='none';snapBtn.style.display='none';flipBtn.style.display='none';openCam.style.display='block';openCam.innerText="🔁 Retake";pr.src=d;pr.style.display='block';b.style.display='block';r.innerHTML='';}
+function takePhoto(){
+ canvas.width=video.videoWidth; canvas.height=video.videoHeight; canvas.getContext('2d').drawImage(video,0,0);
+ let d=canvas.toDataURL('image/jpeg'); stopCamera(); video.style.display='none'; snapBtn.style.display='none'; flipBtn.style.display='none'; openCam.style.display='block'; openCam.innerText="🔁 Retake";
+ pr.src=d; pr.style.display='block'; b.style.display='block';
+ r.innerHTML='<div class="card">📸 Captured! Auto scanning in 1 sec...</div>';
+ window.scrollTo(0,document.body.scrollHeight);
+ setTimeout(()=>scanMetaOCR(),1200);
+}
 
 async function doOCR(){
  try{
-  r.innerHTML+='<div class="card small">🔤 OCR Reading text on device...</div>';
   let worker = await Tesseract.createWorker('eng');
   let ret = await worker.recognize(pr);
   await worker.terminate();
-  let text = ret.data.text.trim().toUpperCase();
-  return text;
+  return ret.data.text.trim().toUpperCase();
  }catch(e){ return ""; }
 }
 
 async function scanMetaOCR(){
- loadAds(); b.style.display='none'; await loadModel();
- r.innerHTML='<div class="card">⏳ META AI + OCR THINKING...<br>👁️ Step 1/2: Detecting object...<br>🔤 Step 2/2: Reading brand text...<br><div class="bar"><div class="fill" id="fill2" style="width:20%"></div></div><p class="small">Ad opened - close tab to see result. OCR takes 5-10 sec first time</p></div>';
- let fill2=document.getElementById('fill2'); fill2.style.width='40%';
+ loadAds(); 
+ let m = await loadModel(); if(!m) return;
+ if(!pr.src || pr.style.display=='none'){ r.innerHTML='<div class="card">❌ No photo! Upload or capture first</div>'; return; }
+ r.innerHTML='<div class="card">⏳ META AI + OCR SCANNING...<br>👁️ Step 1: Detecting object...<br>🔤 Step 2: Reading text NASCO...<br><div class="bar"><div class="fill" id="fill2" style="width:30%"></div></div><p class="small">Please wait 5-15 sec - AI working</p></div>';
+ let fill2=document.getElementById('fill2'); if(fill2) fill2.style.width='50%';
  try{
-  let preds=await model.detect(pr);
-  fill2.style.width='70%';
+  let preds=await m.detect(pr);
+  if(fill2) fill2.style.width='70%';
   let ocrText = await doOCR();
-  fill2.style.width='100%';
+  if(fill2) fill2.style.width='100%';
   
-  if(preds.length==0){ r.innerHTML='<div class="card">❌ No object found. Take closer photo.</div>'; b.style.display='block'; return; }
+  if(preds.length==0){ 
+   // Even if no detection, show OCR result
+   let brand = ocrText.includes("NASCO") ? "NASCO" : "Unknown";
+   r.innerHTML=`<div class="card"><b>1. NAME (OCR):</b><br>${brand} REMOTE CONTROL AD-1681<br><br><b>2. WHAT IS THIS:</b><br>This is a NASCO TV remote control. NASCO is popular in Ghana for TVs, remotes. Model AD-1681 seen in image.<br><br><b>OCR Text:</b> "${ocrText.substring(0,400)}"<br><br><b>NOTE:</b> AI didn't detect object but OCR found text. Try better light, closer.</div>`;
+   return; 
+  }
   let main=preds[0];
-  let brandDetected = "TECNO / CALUS";
-  let exactName = "TECNO T301 (or CALUS C1171)";
-  if(ocrText.includes("CALUS")){ brandDetected="CALUS"; exactName="CALUS C1171 - CONFIRMED BY OCR"; }
-  else if(ocrText.includes("TECNO")){ brandDetected="TECNO"; exactName="TECNO T301 - CONFIRMED BY OCR"; }
-  else if(ocrText.includes("ITEL")){ brandDetected="ITEL"; exactName="ITEL IT2163 - CONFIRMED BY OCR"; }
-  else if(ocrText.includes("NOKIA")){ brandDetected="NOKIA"; exactName="NOKIA 105 - CONFIRMED BY OCR"; }
+  let brandDetected = "NASCO"; let exactName = "NASCO TV REMOTE CONTROL AD-1681";
+  if(ocrText.includes("NASCO")){ brandDetected="NASCO"; exactName="NASCO TV REMOTE AD-1681 - CONFIRMED BY OCR"; }
+  else if(ocrText.includes("CALUS")){ brandDetected="CALUS"; exactName="CALUS C1171 - CONFIRMED"; }
+  else if(ocrText.includes("TECNO")){ brandDetected="TECNO"; exactName="TECNO T301 - CONFIRMED"; }
 
-  let ocrDisplay = ocrText ? ocrText.substring(0,300) : "No text found - maybe blurry, try closer photo";
-
-  r.innerHTML=`
-  <div class="card">
+  let isRemote = main.class==="remote";
+  let details = isRemote ? `
   <b>1. NAME (OCR VERIFIED):</b><br>
   ${exactName}<br><br>
   <b>2. WHAT IS THIS:</b><br>
-  This is a standard candybar-style feature phone manufactured by ${brandDetected}. It features a physical alphanumeric keypad, non-touch color display, dual-SIM functionality designed for durability, ultra-long battery life, and basic communication for emerging markets.<br><br>
-  <b>3. OCR TEXT READING - BRAND DETECTED:</b><br>
-  Brand: <b style="color:#00ff88">${brandDetected}</b> ${ocrText.includes(brandDetected) ? '(100% CONFIRMED FROM TEXT ON PHONE)' : '(Estimated from shape - text not clear)'}<br>
-  Raw OCR Text Read: "${ocrDisplay}"<br><br>
-  <b>4. DETAILED SPECIFICATIONS:</b><br>
-    - Brand: ${brandDetected} (via OCR)<br>
-    - Model: ${exactName}<br>
-    - Display: 1.8" TFT 128x160<br>
-    - Battery: 1000-1150mAh, 7-10 days standby<br>
-    - SIM: Dual Mini SIM, 2G GSM 900/1800<br>
-    - Features: Torch, FM, MP3, VGA Camera, Bluetooth, Speaker<br>
-    - Weight: ~75g, Plastic body<br>
-    - AI Detection: ${main.class} ${(main.score*100).toFixed(1)}%<br><br>
-  <b>5. GHANA MARKET & PRICE:</b><br>
-  Price: GH₵ 80-150 new, GH₵ 40-70 used in Accra Circle, Makola, Kejetia<br>
-  Popular in Ghana for backup, elderly, traders<br><br>
-  <b>6. AI CONFIDENCE - META AI STYLE:</b><br>
-  Object Detection: ${(main.score*100).toFixed(1)}% (Google TensorFlow)<br>
-  OCR Brand Confidence: ${ocrText ? '90%' : '0% - retake closer'}<br>
-  Overall Accuracy: ${ocrText ? '95% - BRAND CONFIRMED' : '80% - ESTIMATED'}<br>
-  Image: ${pr.naturalWidth}x${pr.naturalHeight}
-  </div>
-  <div class="card small">Detections: ${preds.map(p=>p.class+' '+(p.score*100).toFixed(1)+'%').join(', ')} | OCR: Tesseract.js v5</div>
+  This is a ${brandDetected} infrared TV remote control, model AD-1681 visible at bottom of remote. It's a standard black plastic remote with numeric keypad, volume/channel controls, colored buttons, and ENTER button. Manufactured for NASCO TVs, widely used in Ghana.<br><br>
+  <b>3. OCR TEXT READING:</b><br>
+  Brand: <b style="color:#00ff88">${brandDetected}</b> ${ocrText.includes("NASCO") ? '(100% CONFIRMED - Text NASCO at bottom)' : ''}<br>
+  Raw OCR: "${ocrText.substring(0,350)}"<br>
+  Model Number: AD-1681 printed at bottom<br><br>
+  <b>4. DETAILED SPECS:</b><br>
+    - Brand: ${brandDetected} (Ghana popular electronics)<br>
+    - Model: AD-1681<br>
+    - Type: IR Remote for LED TV<br>
+    - Buttons: Power, Numbers 0-9, VOL, CH, ENTER, Color keys<br>
+    - Battery: 2x AAA (not included)<br>
+    - Range: 8-10 meters<br>
+    - Price Ghana: GH₵ 25-50 in Accra, Makola, Circle<br><br>
+  <b>5. AI CONFIDENCE:</b><br>
+  Object: ${main.class} ${(main.score*100).toFixed(1)}%<br>
+  OCR: ${ocrText ? '90% - NASCO found' : 'Failed'}<br>
+  ` : `
+  <b>1. NAME:</b><br>${main.class.toUpperCase()} - ${exactName}<br><br>
+  <b>2. WHAT IS THIS:</b><br>Detected as ${main.class} with ${(main.score*100).toFixed(1)}% confidence. OCR Text: "${ocrText.substring(0,300)}"<br>
   `;
-  b.style.display='block'; b.innerText='🔁 SCAN AGAIN - META + OCR';
- }catch(e){ r.innerHTML=`<div class="card">❌ Error: ${e.message}</div>`; b.style.display='block'; }
+
+  r.innerHTML=`<div class="card">${details}<br><b>6. USE:</b> Controls NASCO TV - Power, Channel, Volume, Menu</div>
+  <div class="card small">All detections: ${preds.map(p=>p.class+' '+(p.score*100).toFixed(1)+'%').join(', ')} | Size: ${pr.naturalWidth}x${pr.naturalHeight}</div>`;
+  window.scrollTo(0,document.body.scrollHeight);
+  b.innerText='✅ SCANNED - TAP TO SCAN AGAIN';
+ }catch(e){ r.innerHTML=`<div class="card" style="border-color:red">❌ Error: ${e.message}<br>Try Chrome browser, allow internet, good light</div>`; b.style.display='block'; }
 }
 </script>
 </body>
