@@ -1,26 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Koomson Official - Earning Live</title>
-<meta name="monetag" content="0cc56eba8228830ee76de3d63f66f530">
+<title>AI Photo Analyzer</title>
+
+<!-- YOUR MONETAG MONEY CODE - DO NOT REMOVE -->
+<script src="https://quge5.com/88/tag.min.js" data-zone="305025" async data-cfasync="false"></script>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#0f172a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#fff;color:#0f172a;padding:30px;border-radius:20px;max-width:480px;width:100%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-h1{font-size:26px;margin-bottom:10px}
-.zone{font-size:12px;background:#f1f5f9;padding:8px;border-radius:8px;margin:10px 0;color:#334155}
-.btn{background:#22c55e;color:#fff;border:0;padding:18px;border-radius:50px;font-size:18px;font-weight:900;width:100%;margin:15px 0;cursor:pointer}
-.live{display:inline-block;background:#22c55e;color:#fff;padding:6px 18px;border-radius:20px;font-size:12px;font-weight:bold}
+body { font-family: Arial; text-align: center; padding: 20px; background: #f0f0f0; }
+.card { background: white; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+button { background: #6c5ce7; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; width: 100%; margin-top: 15px; }
+button:active { background: #5a4bd1; }
+#preview { width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
+#result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+input[type=file] { display: none; }
+.upload-label { background: #00b894; color: white; padding: 15px; border-radius: 10px; display: block; cursor: pointer; }
 </style>
 </head>
 <body>
+
 <div class="card">
-<h1>Welcome to Koomson 🚀</h1>
-<span class="live">● LIVE & EARNING</span>
-<div class="zone">Zone 12176153 Active<br>Zone 12176312 Active</div>
-<button class="btn" onclick="this.innerHTML='Thanks! ❤️'">CLICK TO SUPPORT 👆</button>
-<p style="font-size:13px;color:#64748b">Every view supports my site. Thank you!</p>
-<p style="font-size:11px;color:#94a3b8;margin-top:10px">koomsonc988-spec.github.io - Verified by Monetag</p>
+<h2>📸 AI Photo Analyzer</h2>
+<p>Take a pic to see your result</p>
+
+<label for="photoInput" class="upload-label">📷 Take / Upload Photo</label>
+<input type="file" id="photoInput" accept="image/*" capture="camera">
+
+<img id="preview">
+<div id="result"></div>
+
+<button id="analyzeBtn" style="display:none;" onclick="startAnalysis()">✨ Get My Result</button>
 </div>
+
+<script>
+let selectedImage = null;
+const photoInput = document.getElementById('photoInput');
+const preview = document.getElementById('preview');
+const resultDiv = document.getElementById('result');
+const analyzeBtn = document.getElementById('analyzeBtn');
+
+photoInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    selectedImage = file;
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+    resultDiv.innerHTML = "";
+    analyzeBtn.style.display = 'block';
+  }
+});
+
+function startAnalysis() {
+  // 1. Hide button, show loading - THIS IS WHERE AD WILL SHOW
+  analyzeBtn.style.display = 'none';
+  resultDiv.innerHTML = "<h3>⏳ Analyzing...</h3><p>Please wait 5 seconds<br>Loading AI result...</p>";
+
+  // 2. Force Monetag Ad to show (Multitag will show interstitial automatically)
+  // Also try to trigger manually
+  window.scrollTo(0,0);
+
+  // 3. Wait 5 seconds for ad to finish, then show result
+  setTimeout(function() {
+    showFinalResult();
+  }, 5000);
+}
+
+function showFinalResult() {
+  // CHANGE THIS RESULT TO WHATEVER YOUR APP DOES
+  const results = [
+    "🔥 You look amazing! 95% attractive!",
+    "😎 Your vibe is confident and powerful!",
+    "🌟 Today is your lucky day! Good news coming!",
+    "💎 Your face shows you are a future millionaire!",
+    "❤️ You have a kind heart, people love you!"
+  ];
+  const randomResult = results[Math.floor(Math.random() * results.length)];
+  
+  resultDiv.innerHTML = `
+    <div style="background:#dfe6e9; padding:15px; border-radius:10px;">
+      <h2>${randomResult}</h2>
+      <p style="font-weight:normal; font-size:14px;">Share with friends to try!</p>
+      <button onclick="location.reload()" style="background:#636e72; margin-top:10px;">Try Another Pic</button>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
